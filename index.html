@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071629">
+<title>Fitness Gold</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#07111f;color:#fff;font-family:Arial,sans-serif}
+header{padding:28px 20px;background:linear-gradient(135deg,#193d61,#07111f);border-bottom:2px solid #c5a04c}
+.logo{font-size:32px;font-weight:900;color:#e4c779;letter-spacing:2px}
+.sub{font-size:11px;letter-spacing:2px;color:#ddd}
+nav{display:flex;gap:5px;padding:10px;background:#102238;position:sticky;top:0;z-index:2}
+button{background:linear-gradient(135deg,#e4c779,#ad812d);border:0;border-radius:9px;padding:13px;color:#101b29;font-weight:bold;cursor:pointer;margin:4px}
+nav button{flex:1;padding:12px 4px}
+main{max-width:720px;margin:auto;padding:16px}
+h2{color:#e4c779}
+.card{background:#11263d;border:1px solid #304761;border-radius:15px;padding:17px;margin:14px 0}
+input,select,textarea{width:100%;padding:13px;margin:7px 0 14px;background:#091827;color:white;border:1px solid #53677e;border-radius:8px}
+label{color:#e4c779;font-size:13px}
+.page{display:none}.active{display:block}
+.gold{color:#e4c779}
+.secondary{background:#203b56;color:white;border:1px solid #c5a04c}
+.exercise{display:flex;align-items:center;gap:12px}
+.figure{width:100px;height:115px;background:#091827;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.figure svg{width:90px;height:100px}
+small{color:#b3c0cf}
+footer{text-align:center;color:#8593a5;padding:25px}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">FITNESS GOLD</div>
+<div class="sub">YOUR TRAINING. YOUR EVOLUTION.</div>
+<p>Seu treino. Sua evolução.</p>
+</header>
+
+<nav>
+<button onclick="show('inicio')">Início</button>
+<button onclick="show('perfil')">Perfil</button>
+<button onclick="show('treinos')">Treinos</button>
+<button onclick="show('biblioteca')">Exercícios</button>
+</nav>
+
+<main>
+
+<section id="inicio" class="page active">
+<h2>Bem-vindo ao Fitness Gold</h2>
+<div class="card">
+<h3>Seu personal trainer digital</h3>
+<p>Treinos organizados para academia e casa, com orientações e demonstrações.</p>
+<button onclick="show('perfil')">Começar avaliação</button>
+</div>
+<div class="card">
+<h3>Onde você vai treinar hoje?</h3>
+<button onclick="choose('Academia')">Academia</button>
+<button onclick="choose('Casa')">Em casa</button>
+<p id="choice" class="gold">Escolha seu ambiente de treino.</p>
+</div>
+<div class="card">
+<h3>Sua evolução começa aqui</h3>
+<p>Organize suas atividades e acompanhe seu histórico.</p>
+<button onclick="show('treinos')">Meus treinamentos</button>
+</div>
+</section>
+
+<section id="perfil" class="page">
+<h2>Avaliação inicial</h2>
+<p>Precisamos conhecer você para organizar suas atividades.</p>
+<div class="card">
+<label>Nome</label>
+<input id="nome" placeholder="Digite seu nome">
+
+<label>Idade</label>
+<input id="idade" type="number" min="13" max="100" placeholder="Sua idade">
+
+<label>Sexo (opcional)</label>
+<select id="sexo">
+<option>Prefiro não informar</option>
+<option>Feminino</option>
+<option>Masculino</option>
+<option>Outro</option>
+</select>
+
+<label>Altura em centímetros (opcional)</label>
+<input id="altura" type="number" placeholder="Ex.: 170">
+
+<label>Peso em kg (opcional)</label>
+<input id="peso" type="number" placeholder="Opcional">
+
+<label>Experiência com exercícios</label>
+<select id="nivel">
+<option>Iniciante</option>
+<option>Intermediário</option>
+<option>Experiente</option>
+</select>
+
+<label>Qual seu objetivo?</label>
+<select id="objetivo">
+<option>Condicionamento físico</option>
+<option>Fortalecimento</option>
+<option>Aprender musculação</option>
+<option>Mobilidade e flexibilidade</option>
+<option>Bem-estar geral</option>
+</select>
+
+<label>Onde pretende treinar?</label>
+<select id="local">
+<option>Academia</option>
+<option>Casa</option>
+<option>Os dois</option>
+</select>
+
+<label>Equipamentos disponíveis em casa</label>
+<select id="equip">
+<option>Nenhum</option>
+<option>Halteres</option>
+<option>Elásticos</option>
+<option>Halteres e elásticos</option>
+<option>Equipamentos variados</option>
+</select>
+
+<label>Possui alguma limitação de movimento ou orientação médica importante?</label>
+<textarea id="limite" placeholder="Informação opcional"></textarea>
+
+<button onclick="saveProfile()">Salvar avaliação</button>
+<p id="saved" class="gold"></p>
+</div>
+</section>
+
+<section id="treinos" class="page">
+<h2>Meus treinamentos</h2>
+<div class="card">
+<h3>Escolha seu ambiente</h3>
+<button onclick="choose('Academia')">Academia</button>
+<button onclick="choose('Casa')">Em casa</button>
+<p id="mode" class="gold">Nenhum ambiente escolhido.</p>
+</div>
+<div id="workout"></div>
+</section>
+
+<section id="biblioteca" class="page">
+<h2>Biblioteca de exercícios</h2>
+<p>Conheça os movimentos e consulte as instruções.</p>
+<div id="library"></div>
+</section>
+
+</main>
+
+<footer>
+FITNESS GOLD • Treinamento com responsabilidade
+</footer>
+
+<script>
+const exercises=[
+{
+name:"Agachamento",
+type:"Casa e academia",
+sets:"2 séries de 8 repetições",
+desc:"Fique em pé, com os pés afastados na largura dos ombros. Leve o quadril para trás, flexione os joelhos e retorne devagar."
+},
+{
+name:"Flexão na parede",
+type:"Casa",
+sets:"2 séries de 8 repetições",
+desc:"Apoie as mãos na parede, na altura dos ombros. Flexione os cotovelos aproximando o peito e depois empurre para voltar."
+},
+{
+name:"Remada sentada",
+type:"Academia",
+sets:"2 séries de 10 repetições",
+desc:"Sente-se na máquina, mantenha o tronco confortável e puxe a alça em direção ao corpo. Retorne lentamente."
+},
+{
+name:"Elevação de panturrilha",
+type:"Casa e academia",
+sets:"2 séries de 10 repetições",
+desc:"Fique em pé, com apoio se necessário. Eleve os calcanhares lentamente e retorne ao chão."
+},
+{
+name:"Ponte de glúteos",
+type:"Casa",
+sets:"2 séries de 10 repetições",
+desc:"Deite de costas, dobre os joelhos e apoie os pés no chão. Eleve o quadril suavemente e retorne."
+},
+{
+name:"Supino na máquina",
+type:"Academia",
+sets:"2 séries de 10 repetições",
+desc:"Ajuste o banco e as alças. Empurre de maneira controlada e retorne sem movimentos bruscos."
+}
+];
+
+function show(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+function choose(v){
+document.getElementById('choice').textContent="Ambiente escolhido: "+v;
+document.getElementById('mode').textContent="Treino selecionado: "+v;
+render(v);
+}
+
+function saveProfile(){
+const data={
+nome:document.getElementById('nome').value,
+idade:document.getElementById('idade').value,
+sexo:document.getElementById('sexo').value,
+altura:document.getElementById('altura').value,
+peso:document.getElementById('peso').value,
+nivel:document.getElementById('nivel').value,
+objetivo:document.getElementById('objetivo').value,
+local:document.getElementById('local').value,
+equip:document.getElementById('equip').value,
+limite:document.getElementById('limite').value
+};
+
+if(!data.nome.trim()||!data.idade||data.idade<13||data.idade>100){
+document.getElementById('saved').textContent="Informe seu nome e uma idade válida.";
+return;
+}
+
+localStorage.setItem('fitnessGoldProfile',JSON.stringify(data));
+document.getElementById('saved').textContent="Avaliação salva! Bem-vindo, "+data.nome+"!";
+}
+
+function figure(){
+return `<div class="figure">
+<svg viewBox="0 0 100 110" fill="none" stroke="#e4c779" stroke-width="5" stroke-linecap="round">
+<circle cx="50" cy="17" r="9" fill="#e4c779"/>
+<path d="M50 28 L50 60 M50 36 L27 52 M50 36 L73 52 M50 60 L32 91 M50 60 L68 91"/>
+</svg>
+</div>`;
+}
+
+function card(e){
+return `<div class="card">
+<div class="exercise">
+${figure()}
+<div>
+<strong class="gold">${e.name}</strong><br>
+<small>${e.type}</small><br>
+<small>${e.sets}</small>
+</div>
+</div>
+<p>${e.desc}</p>
+<small>Faça o movimento com controle e respeite seus limites.</small>
+</div>`;
+}
+
+function render(mode){
+const list=exercises.filter(e=>e.type.includes(mode)||e.type==="Casa e academia");
+document.getElementById('workout').innerHTML=list.map(card).join('');
+document.getElementById('library').innerHTML=exercises.map(card).join('');
+}
+
+render('Casa');
+</script>
+</body>
+</html>
